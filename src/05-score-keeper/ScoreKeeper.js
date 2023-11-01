@@ -1,13 +1,32 @@
-import { useEffect, useState } from 'react'
+import React from 'react';
+class ScoreKeeper extends React.Component {
+  constructor(props) {
+    super(props);
+    const curScore = Number(localStorage.getItem('score'));
+    this.state = {
+      score: curScore
+    }
 
-export default function ScoreKeeper () {
-  const [score, setScore] = useState(0)
-
-  return (
-    <div>
-      <h1>Your score is: {score}</h1>
-      <button onClick={() => setScore(prevScore => prevScore + 1)}>+</button>
-      <button onClick={() => setScore(prevScore => prevScore - 1)}>-</button>
-    </div>
-  )
+  }
+  render() {
+    return (
+      <div>
+        <h1>Your score is: {this.state.score}</h1>
+        <button onClick={this.handlePlusClick}>+</button>
+        <button onClick={this.handleMinusClick}>-</button>
+      </div>
+    );
+  }
+  handlePlusClick = () => {
+    localStorage.setItem('score', this.prevScore() + 1);
+    this.setState({ score: localStorage.getItem('score') })
+  }
+  handleMinusClick = (syntheticEvent) => {
+    localStorage.setItem('score', this.prevScore() - 1);
+    this.setState({ score: localStorage.getItem('score') })
+  }
+  prevScore = () => {
+    return Number(localStorage.getItem('score'));
+  }
 }
+export default ScoreKeeper;
