@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React from 'react'
 import Color from './Color'
 
 const colors = [{
@@ -18,16 +18,36 @@ const colors = [{
   name: 'Tart Orange'
 }]
 
-export default function ColorPicker () {
-  const [backgroundColor, setBackgroundColor] = useState('white')
-
-  return (
-    <div className='page' style={{ backgroundColor }}>
-      {
-        colors.map(color => (
-          <Color key={color.hex} hex={color.hex} name={color.name} />
-        ))
-      }
-    </div>
-  )
+class ColorPicker extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      backgroundColor: 'white'
+    }
+  }
+  render() {
+    const backgroundStyle = {
+      backgroundColor: this.state.backgroundColor
+    }
+    return (
+      <div className='page' style={backgroundStyle}>
+        {
+          colors.map(color => (
+            <Color
+              key={color.hex}
+              hex={color.hex}
+              name={color.name}
+              colorHandler={this.handleColorChange}
+            />
+          ))
+        }
+      </div>
+    );
+  }
+  handleColorChange = (newBackgroundColor) => {
+    this.setState({
+      backgroundColor: newBackgroundColor
+    })    
+  }
 }
+export default ColorPicker;
