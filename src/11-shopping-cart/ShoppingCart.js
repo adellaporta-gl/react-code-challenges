@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 
 const items = [{
   name: 'apple',
@@ -11,9 +11,44 @@ const items = [{
   price: 3.99
 }]
 
-function ShoppingCart () {
-  const cart = [{ name: 'apple', quantity: 3, price: 0.39 }]
-
+function ShoppingCart() {
+  const [cart, setCart] = useState([{ name: 'apple', quantity: 3, price: 0.39 }]);
+  const [total, setTotal] = useState(0);
+  useEffect(() => {
+    setTotal(() => {
+      const cartCopy = cart.concat();
+      var auxT = 0;
+      cartCopy.forEach(cartItem => auxT += cartItem.price * cartItem.quantity);
+      return auxT;
+    });
+  }, [cart]);
+  const addToCart = (item) => {
+    const cartCopy = cart.concat();
+    const itemInCart = cart.find(c => c.name === item.name);
+    if (itemInCart) {
+      itemInCart.quantity += 1;
+    } else {
+      item.quantity = 1;
+      cartCopy.push(item);
+    }
+    setCart(cartCopy);
+  }
+  const addItem = (item) => {
+    const cartCopy = cart.concat();
+    const newItemValue = cartCopy.find(c => c.name === item.name);
+    newItemValue.quantity += 1;
+    setCart(cartCopy);
+  }
+  const removeItem = (item) => {
+    const cartCopy = cart.concat();
+    const itemToDeleteIndex = cartCopy.findIndex(c => c.name === item.name);
+    if (cartCopy[itemToDeleteIndex].quantity > 1) {
+      cartCopy[itemToDeleteIndex].quantity -= 1;
+    } else {
+      cartCopy.splice(itemToDeleteIndex, itemToDeleteIndex + 1);
+    }
+    setCart(cartCopy);
+  }
   return (
     <div>
       <h1>Shopping Cart</h1>
@@ -24,7 +59,7 @@ function ShoppingCart () {
             <div key={item.name}>
               <h3>{item.name}</h3>
               <p>${item.price}</p>
-              <button>Add to Cart</button>
+              <button onClick={() => addToCart(item)}>Add to Cart</button>
             </div>)
           )}
         </div>
@@ -34,17 +69,17 @@ function ShoppingCart () {
             <div key={item.name}>
               <h3>{item.name}</h3>
               <p>
-                <button>-</button>
+                <button onClick={() => removeItem(item)}>-</button>
                 {item.quantity}
-                <button>+</button>
+                <button onClick={() => addItem(item)}>+</button>
               </p>
-              <p>Subtotal: ${item.quantity * item.price}</p>
+              <p>Subtotal: ${(item.quantity * item.price).toFixed(2)}</p>
             </div>
           ))}
         </div>
       </div>
       <div className='total'>
-        <h2>Total: $0.00</h2>
+        <h2>Total: ${(total).toFixed(2)}</h2>
       </div>
     </div>
   )
